@@ -249,6 +249,12 @@ public final class MessageView: UIView, MessageTextViewListener {
         button.titleLabel?.font = font
         buttonLayoutDidChange(button: button)
     }
+    
+    public var topInset: CGFloat = 0 {
+        didSet {
+            delegate?.wantsLayout(messageView: self)
+        }
+    }
 
     public var bottomInset: CGFloat = 0 {
         didSet {
@@ -278,7 +284,7 @@ public final class MessageView: UIView, MessageTextViewListener {
         let leftButtonSize = leftButton.bounds.size
         let rightButtonSize = rightButton.bounds.size
 
-        let textViewY = safeBounds.minY
+        let textViewY = topInset + safeBounds.minY
         let textViewHeight = self.textViewHeight
         let textViewMaxY = textViewY + textViewHeight
 
@@ -344,7 +350,8 @@ public final class MessageView: UIView, MessageTextViewListener {
     // MARK: Private API
     
     internal var height: CGFloat {
-        return textViewHeight
+        return topInset
+            + textViewHeight
             + (contentView?.bounds.height ?? 0)
             + bottomInset
     }
