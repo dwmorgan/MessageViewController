@@ -196,12 +196,19 @@ public final class MessageView: UIView, MessageTextViewListener {
         }
     }
     
+    public var contentViewHeight: CGFloat = 0 {
+        didSet {
+            delegate?.wantsLayout(messageView: self)
+        }
+    }
+    
     public func add(contentView: UIView) {
         self.contentView?.removeFromSuperview()
         assert(contentView.bounds.height > 0, "Must have a non-zero content height")
         self.contentView = contentView
         addSubview(contentView)
         setNeedsLayout()
+        contentViewHeight = contentView.frame.height
         delegate?.wantsLayout(messageView: self)
     }
 
@@ -333,7 +340,7 @@ public final class MessageView: UIView, MessageTextViewListener {
             x: safeBounds.minX,
             y: textViewFrame.maxY,
             width: safeBounds.width,
-            height: contentView?.frame.height ?? 0
+            height: contentViewHeight /*contentView?.frame.height ?? 0*/
         )
     }
 
@@ -352,7 +359,7 @@ public final class MessageView: UIView, MessageTextViewListener {
     internal var height: CGFloat {
         return topInset
             + textViewHeight
-            + (contentView?.bounds.height ?? 0)
+            + (contentViewHeight == 0 ? (contentView?.bounds.height ?? 0) : contentViewHeight)
             + bottomInset
     }
     
